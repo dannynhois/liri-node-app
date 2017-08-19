@@ -46,23 +46,23 @@ function spotifySong () {
     spotifyApi.searchTracks(option)
     .then(function (trackData) {
       var track = trackData.body.tracks.items[0];
-      // console.log('track: ', track);
-      console.log('Track artist: ', track.artists[0].name);
-      console.log('Track name: ', track.name);
-      console.log('Track preview url: ', track.preview_url);
-      console.log('Track album: ', track.album.name);
+      // logOutput('track: ', track);
+      logOutput('Track artist: ', track.artists[0].name);
+      logOutput('Track name: ', track.name);
+      logOutput('Track preview url: ', track.preview_url);
+      logOutput('Track album: ', track.album.name);
     }, function (err) {
       console.error(err);
       // console.error('ace of base');
     });
   }, function (err) {
-    console.log('Something went wrong when retrieving an access token', err.message);
+    logOutput('Something went wrong when retrieving an access token', err.message);
   });
 }
 
 function randomText () {
   fs.readFile('random.txt', 'utf8', function (err, data) {
-    if (err) return console.log("Can't read file");
+    if (err) return logOutput("Can't read file");
 
     [command, option] = data.split(',');
     checkCommand();
@@ -87,15 +87,14 @@ function movie () {
       * Actors in the movie.
       * Rotten Tomatoes URL.
       */
-      console.log(movieInfo);
-      console.log('Movie title: ' + movieInfo.Title);
-      console.log('Year movie came out: ' + movieInfo.Year);
-      console.log('IMDB Rating: ' + movieInfo.imdbRating);
-      console.log('Country where movie produced: ' + movieInfo.Country);
-      console.log('Language movie: ' + movieInfo.Language);
-      console.log('Plot of the movie: ' + movieInfo.Plot);
-      console.log('Actors in the movie: ' + movieInfo.Actors);
-      console.log('Rotten tomatoes URL: ' + movieInfo.imdbRating);
+      logOutput('Movie title: ' + movieInfo.Title);
+      logOutput('Year movie came out: ' + movieInfo.Year);
+      logOutput('IMDB Rating: ' + movieInfo.imdbRating);
+      logOutput('Country where movie produced: ' + movieInfo.Country);
+      logOutput('Language movie: ' + movieInfo.Language);
+      logOutput('Plot of the movie: ' + movieInfo.Plot);
+      logOutput('Actors in the movie: ' + movieInfo.Actors);
+      logOutput('Rotten tomatoes URL: ' + movieInfo.imdbRating);
     }
   });
 }
@@ -106,8 +105,17 @@ function tweets () {
   client.get('statuses/user_timeline', params, function (error, tweets, response) {
     if (!error) {
       for (var i = 0; i < 20; i++) {
-        console.log(tweets[i].text + ' - ' + tweets[i].created_at);
+        logOutput(tweets[i].text + ' - ' + tweets[i].created_at);
       }
     }
+  });
+}
+
+function logOutput (s) {
+  console.log(s);
+  var date = new Date();
+  s = '\n[' + date + ']\nInput: ' + command + ' ' + option + '\nOutput: ' + s;
+  fs.appendFile('log.txt', '\n' + s, function (err) {
+    if (err) throw err;
   });
 }
