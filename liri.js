@@ -1,6 +1,7 @@
-var twitter = require('twitter');
+var Twitter = require('twitter');
 var spotify = require('spotify');
 var request = require('request');
+var keys = require('./keys');
 var SpotifyWebApi = require('spotify-web-api-node');
 var fs = require('fs');
 
@@ -27,15 +28,15 @@ function checkCommand () {
     case 'movie-this':
       movie();
       break;
+    case 'my-tweets':
+      tweets();
+      break;
   }
 }
 
 function spotifySong () {
   spotifyApi.clientCredentialsGrant()
   .then(function (data) {
-    // console.log('The access token expires in ' + data.body['expires_in']);
-    // console.log('The access token is ' + data.body['access_token']);
-
     // Save the access token so that it's used in future calls
     spotifyApi.setAccessToken(data.body['access_token']);
 
@@ -95,6 +96,18 @@ function movie () {
       console.log('Plot of the movie: ' + movieInfo.Plot);
       console.log('Actors in the movie: ' + movieInfo.Actors);
       console.log('Rotten tomatoes URL: ' + movieInfo.imdbRating);
+    }
+  });
+}
+
+function tweets () {
+  var client = new Twitter(keys.twitterKeys);
+  var params = {screen_name: 'nodejs'};
+  client.get('statuses/user_timeline', params, function (error, tweets, response) {
+    if (!error) {
+      for (var i = 0; i < 20; i++) {
+        console.log(tweets[i].text + ' - ' + tweets[i].created_at);
+      }
     }
   });
 }
